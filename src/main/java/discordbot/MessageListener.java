@@ -15,6 +15,10 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
+        
+        if (event.getMember().getUser().isBot()) {
+            return;
+        }
         event.getGuild().getTextChannelsByName("通知", false).get(0).sendMessageFormat("%sさんが[🔊%s]に入りました",
                 event.getMember().getEffectiveName(), event.getChannelJoined().getName()).queue();
     }

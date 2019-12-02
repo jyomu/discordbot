@@ -26,7 +26,7 @@ dependencies {
     implementation 'com.google.guava:guava:27.0.1-jre'
     
     // JDA
-    implementation  'net.dv8tion:JDA:4.0.0_51'
+    implementation  'net.dv8tion:JDA:4.0.0_69'
 }
 
 // Define the main class for the application
