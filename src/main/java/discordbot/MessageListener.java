@@ -15,6 +15,11 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
+        if (event.getEntity().getGuild().getTextChannelsByName("通知", false).isEmpty()) {
+            event.getEntity().getGuild().getTextChannels().get(0)
+                    .sendMessage("#通知というテキストチャンネルを作成してください。ボイスチャンネルの通知はそこで行われます。").queue();
+            return;
+        }
         if (event.getEntity().getUser().isBot()) {
             return;
         }
