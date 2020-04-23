@@ -25,14 +25,14 @@ public class MessageListener extends ListenerAdapter {
         }
         if (event.getChannelLeft() != null) {
             event.getEntity().getGuild().getTextChannelsByName("通知", false).get(0)
-                    .sendMessageFormat("%sさんが[🔊%s]から出ました", event.getEntity().getEffectiveName(),
-                            event.getChannelLeft().getName())
+                    .sendMessageFormat("%sさんが[🔊%s]から出ました(計%d人)", event.getEntity().getEffectiveName(),
+                            event.getChannelLeft().getName(), event.getChannelLeft().getMembers().size())
                     .queue();
         }
         if (event.getChannelJoined() != null) {
             event.getEntity().getGuild().getTextChannelsByName("通知", false).get(0)
-                    .sendMessageFormat("%sさんが[🔊%s]に入りました", event.getEntity().getEffectiveName(),
-                            event.getChannelJoined().getName())
+                    .sendMessageFormat("%sさんが[🔊%s]に入りました(計%d人)", event.getEntity().getEffectiveName(),
+                            event.getChannelJoined().getName(), event.getChannelJoined().getMembers().size())
                     .queue();
         }
     }
