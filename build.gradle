@@ -24,7 +24,7 @@ repositories {
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     implementation 'com.google.guava:guava:27.0.1-jre'
-    
+    implementation 'com.google.cloud:google-cloud-texttospeech:1.0.2'
     // JDA
     implementation  'net.dv8tion:JDA:4.0.0_69'
 }
