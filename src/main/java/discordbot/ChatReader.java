@@ -16,7 +16,6 @@ import com.google.cloud.texttospeech.v1.SynthesisInput;
 import com.google.cloud.texttospeech.v1.SynthesizeSpeechResponse;
 import com.google.cloud.texttospeech.v1.TextToSpeechClient;
 import com.google.cloud.texttospeech.v1.VoiceSelectionParams;
-import com.google.protobuf.ByteString;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -29,6 +28,13 @@ public class ChatReader extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(final MessageReceivedEvent event) {
+        if (Pattern.matches("[;；].*", event.getMessage().getContentRaw())) {
+            return;
+        }
+        if (Pattern.matches("(?i)http.*", event.getMessage().getContentRaw())) {
+            read(event.getMember().getEffectiveName()+"url省略");
+            return;
+        }
         if (Pattern.matches("!jyomubot\\s++read\\s++start", event.getMessage().getContentRaw())) {
             readChannels.add(event.getTextChannel());
             System.out.println(readChannels.size());
@@ -40,22 +46,27 @@ public class ChatReader extends ListenerAdapter {
         if (Pattern.matches("!jyomubot\\s++read\\s++stop", event.getMessage().getContentRaw())) {
             readChannels.remove(event.getTextChannel());
             System.out.println(readChannels.size());
-            if (readChannels.size()==0) {
+            if (readChannels.size() == 0) {
                 event.getGuild().getAudioManager().closeAudioConnection();
             }
             return;
         }
-
+        // ここまでreturn
+        
         if (readChannels.contains(event.getChannel())) {
             StringBuilder text = new StringBuilder();
             text.append(event.getMember().getEffectiveName());
             text.append(" ");
             text.append(event.getMessage().getContentDisplay());
-            try {
-                readHandler.queue.add(synthesize(text.toString()));
-            } catch (IOException e) {
-                System.out.println(e);
-            }
+            read(text.toString());
+        }
+    }
+
+    public void read(String text) {
+        try {
+            readHandler.queue.add(synthesize(text));
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 
@@ -81,8 +92,8 @@ public class ChatReader extends ListenerAdapter {
             SynthesizeSpeechResponse response = textToSpeechClient.synthesizeSpeech(input, voice, audioConfig);
 
             // Get the audio contents from the response
-            ByteString audioContents = response.getAudioContent();
-            byte[] data = audioContents.toByteArray();
+            // ByteString audioContents = response.getAudioContent();
+            byte[] data = response.getAudioContent().toByteArray();
             AudioFormat target = new AudioFormat(48000f, 16, 2, true, true);
             AudioInputStream is = AudioSystem.getAudioInputStream(target, new AudioInputStream(
                     new ByteArrayInputStream(data), new AudioFormat(48000f, 16, 1, true, false), data.length));
