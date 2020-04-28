@@ -40,6 +40,9 @@ public class ChatReader extends ListenerAdapter {
         if (Pattern.matches("!jyomubot\\s++read\\s++stop", event.getMessage().getContentRaw())) {
             readChannels.remove(event.getTextChannel());
             System.out.println(readChannels.size());
+            if (readChannels.size()==0) {
+                event.getGuild().getAudioManager().closeAudioConnection();
+            }
             return;
         }
 
