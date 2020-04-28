@@ -11,6 +11,7 @@ public class MessageListener extends ListenerAdapter {
     public static void main(final String[] args) throws LoginException {
         final JDA jda = new JDABuilder(args[0]).build();
         jda.addEventListener(new MessageListener());
+        jda.addEventListener(new ChatReader());
     }
 
     @Override
