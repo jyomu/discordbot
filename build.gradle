@@ -7,9 +7,9 @@
  */
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '5.1.0'
     // Apply the java plugin to add support for Java
     id 'java-platform'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
 
     // Apply the application plugin to add support for building an application
     id 'application'
@@ -22,14 +22,17 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
 }
-
+// Merging Service Files
+shadowJar {
+  mergeServiceFiles()
+}
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     api platform('com.google.cloud:libraries-bom:3.4.0')
     implementation 'com.google.guava:guava'
     implementation 'com.google.cloud:google-cloud-texttospeech:1.0.2'
     // JDA
-    implementation  'net.dv8tion:JDA:4.0.0_69'
+    implementation  'net.dv8tion:JDA:4.1.1_101'
 }
 
 // Define the main class for the application
