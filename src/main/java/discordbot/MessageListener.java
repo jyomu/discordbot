@@ -24,16 +24,19 @@ public class MessageListener extends ListenerAdapter {
         if (event.getEntity().getUser().isBot()) {
             return;
         }
+
         if (event.getChannelLeft() != null) {
             event.getEntity().getGuild().getTextChannelsByName("通知", false).get(0)
                     .sendMessageFormat("%sさんが[🔊%s]から出ました(計%d人)", event.getEntity().getEffectiveName(),
-                            event.getChannelLeft().getName(), event.getChannelLeft().getMembers().size())
+                            event.getChannelLeft().getName(), event.getChannelLeft().getMembers().size() - event
+                                    .getChannelLeft().getMembers().stream().filter(m -> m.getUser().isBot()).count())
                     .queue();
         }
         if (event.getChannelJoined() != null) {
             event.getEntity().getGuild().getTextChannelsByName("通知", false).get(0)
                     .sendMessageFormat("%sさんが[🔊%s]に入りました(計%d人)", event.getEntity().getEffectiveName(),
-                            event.getChannelJoined().getName(), event.getChannelJoined().getMembers().size())
+                            event.getChannelJoined().getName(), event.getChannelJoined().getMembers().size() - event
+                                    .getChannelJoined().getMembers().stream().filter(m -> m.getUser().isBot()).count())
                     .queue();
         }
     }
