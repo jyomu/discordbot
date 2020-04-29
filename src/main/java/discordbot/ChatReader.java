@@ -32,7 +32,7 @@ public class ChatReader extends ListenerAdapter {
             return;
         }
         if (Pattern.matches("(?i)http.*", event.getMessage().getContentRaw())) {
-            read(event.getMember().getEffectiveName()+"url省略");
+            read(event.getMember().getEffectiveName()+" url省略");
             return;
         }
         if (Pattern.matches("!jyomubot\\s++read\\s++start", event.getMessage().getContentRaw())) {
@@ -52,7 +52,7 @@ public class ChatReader extends ListenerAdapter {
             return;
         }
         // ここまでreturn
-        
+
         if (readChannels.contains(event.getChannel())) {
             StringBuilder text = new StringBuilder();
             text.append(event.getMember().getEffectiveName());
