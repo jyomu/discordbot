@@ -11,7 +11,6 @@ import javax.sound.sampled.AudioSystem;
 
 import com.google.cloud.texttospeech.v1.AudioConfig;
 import com.google.cloud.texttospeech.v1.AudioEncoding;
-import com.google.cloud.texttospeech.v1.SsmlVoiceGender;
 import com.google.cloud.texttospeech.v1.SynthesisInput;
 import com.google.cloud.texttospeech.v1.SynthesizeSpeechResponse;
 import com.google.cloud.texttospeech.v1.TextToSpeechClient;
@@ -26,7 +25,6 @@ import net.dv8tion.jda.api.managers.AudioManager;
 public class ChatReader extends ListenerAdapter {
     private final HashSet<TextChannel> readChannels = new HashSet<TextChannel>();
     private final ReadHandler readHandler = new ReadHandler();
-
     @Override
     public void onMessageReceived(final MessageReceivedEvent event) {
         if (Pattern.matches("[;；].*", event.getMessage().getContentRaw())) {
@@ -75,18 +73,17 @@ public class ChatReader extends ListenerAdapter {
             // voice gender
             // ("neutral")
             final VoiceSelectionParams voice = VoiceSelectionParams.newBuilder().setLanguageCode("ja-JP")
-                    .setSsmlGender(SsmlVoiceGender.NEUTRAL).build();
+                    .setName("ja-JP-Standard-A").build();
 
             // Select the type of audio file you want returned
             final AudioConfig audioConfig = AudioConfig.newBuilder().setAudioEncoding(AudioEncoding.LINEAR16)
-                    .setSpeakingRate(1.0f).setPitch(1.0f).setVolumeGainDb(0.0f).setSampleRateHertz(48000).build();
+                    .setSpeakingRate(1.0f).setPitch(1.0f).setVolumeGainDb(-3.0f).setSampleRateHertz(48000).build();
             // Perform the text-to-speech request on the text input with the selected voice
             // parameters and
             // audio file type
             final SynthesizeSpeechResponse response = textToSpeechClient.synthesizeSpeech(input, voice, audioConfig);
 
             // Get the audio contents from the response
-            // ByteString audioContents = response.getAudioContent();
             final AudioFormat target = new AudioFormat(48000f, 16, 2, true, true);
             final byte[] res = response.getAudioContent().toByteArray();
             final AudioInputStream sourceStream = new AudioInputStream(new ByteArrayInputStream(res),
@@ -98,7 +95,7 @@ public class ChatReader extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(final GuildVoiceLeaveEvent event) {
         final AudioManager audioManager = event.getGuild().getAudioManager();
-        if (audioManager.getConnectedChannel().getMembers().stream().filter(m -> !m.getUser().isBot()).count() == 0) {
+        if (event.getJDA().getSelfUser().equals(event.getMember().getUser())||audioManager.getConnectedChannel().getMembers().stream().filter(m -> !m.getUser().isBot()).count() == 0) {
             audioManager.closeAudioConnection();
             readChannels.clear();
         }
