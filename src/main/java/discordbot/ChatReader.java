@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 public class ChatReader extends ListenerAdapter {
     private final HashSet<TextChannel> readChannels = new HashSet<TextChannel>();
     private final ReadHandler readHandler = new ReadHandler();
+
     @Override
     public void onMessageReceived(final MessageReceivedEvent event) {
         if (Pattern.matches("[;；].*", event.getMessage().getContentRaw())) {
@@ -95,7 +96,9 @@ public class ChatReader extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(final GuildVoiceLeaveEvent event) {
         final AudioManager audioManager = event.getGuild().getAudioManager();
-        if (event.getJDA().getSelfUser().equals(event.getMember().getUser())||audioManager.getConnectedChannel().getMembers().stream().filter(m -> !m.getUser().isBot()).count() == 0) {
+        if (event.getJDA().getSelfUser().equals(event.getMember().getUser())
+                || (audioManager.getConnectedChannel() != null && audioManager.getConnectedChannel().getMembers()
+                        .stream().filter(m -> !m.getUser().isBot()).count() == 0)) {
             audioManager.closeAudioConnection();
             readChannels.clear();
         }
