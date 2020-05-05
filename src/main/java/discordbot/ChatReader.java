@@ -54,7 +54,7 @@ public class ChatReader extends ListenerAdapter {
 
         if (getReadChannels(event).contains(event.getChannel())) {// read
             AudioSendHandler audioSendHandler = event.getGuild().getAudioManager().getSendingHandler();
-            if (Pattern.matches("[;；].*", event.getMessage().getContentRaw())) {
+            if (Pattern.matches("[;；!].*", event.getMessage().getContentRaw())) {
                 return;
             }
             if (Pattern.matches("(?i)http.*", event.getMessage().getContentRaw())) {
