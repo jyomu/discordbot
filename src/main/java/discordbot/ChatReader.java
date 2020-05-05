@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.sound.sampled.AudioFormat;
@@ -39,8 +40,12 @@ public class ChatReader extends ListenerAdapter {
     public void onGuildMessageReceived(final GuildMessageReceivedEvent event) {
         if (Pattern.matches("!jyomubot\\s++read\\s++start", event.getMessage().getContentRaw())) {
             final AudioManager audioManager = event.getGuild().getAudioManager();
-            audioManager.openAudioConnection(event.getMember().getVoiceState().getChannel());
-            getReadChannels(event).add(event.getChannel());
+            if (event.getMember().getVoiceState().getChannel() != null) {
+                audioManager.openAudioConnection(event.getMember().getVoiceState().getChannel());
+                getReadChannels(event).add(event.getChannel());
+            } else {
+                event.getChannel().sendMessage("読み上げさせたいボイスチャンネルに入ってからコマンドを実行してください").queue();
+            }
             return;
         }
         if (Pattern.matches("!jyomubot\\s++read\\s++stop", event.getMessage().getContentRaw())) {
@@ -50,9 +55,14 @@ public class ChatReader extends ListenerAdapter {
             }
             return;
         }
+        if (Pattern.matches("!jyomubot\\s++read\\s++ls", event.getMessage().getContentRaw())) {
+            event.getChannel().sendMessage(getReadChannels(event).stream().map(tc -> tc.getAsMention())
+                    .collect(Collectors.toList()).toString()).queue();
+
+        }
         // ここまでreturn
 
-        if (getReadChannels(event).contains(event.getChannel())) {// read
+        if (!event.getAuthor().isBot() && getReadChannels(event).contains(event.getChannel())) {// read
             AudioSendHandler audioSendHandler = event.getGuild().getAudioManager().getSendingHandler();
             if (Pattern.matches("[;；!].*", event.getMessage().getContentRaw())) {
                 return;
