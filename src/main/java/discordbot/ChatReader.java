@@ -31,20 +31,12 @@ import net.dv8tion.jda.api.managers.AudioManager;
 @Slf4j
 public class ChatReader extends ListenerAdapter {
     @Override
-    public void onGuildReady(GuildReadyEvent event){
+    public void onGuildReady(GuildReadyEvent event) {
         event.getGuild().getAudioManager().setSendingHandler(new ReadHandler());
     }
 
     @Override
     public void onGuildMessageReceived(final GuildMessageReceivedEvent event) {
-        if (Pattern.matches("[;；].*", event.getMessage().getContentRaw())) {
-            return;
-        }
-        if (Pattern.matches("(?i)http.*", event.getMessage().getContentRaw())) {
-            addReaded(event.getGuild().getAudioManager().getSendingHandler(),
-                    event.getMember().getEffectiveName() + " url省略");
-            return;
-        }
         if (Pattern.matches("!jyomubot\\s++read\\s++start", event.getMessage().getContentRaw())) {
             final AudioManager audioManager = event.getGuild().getAudioManager();
             audioManager.openAudioConnection(event.getMember().getVoiceState().getChannel());
@@ -60,9 +52,18 @@ public class ChatReader extends ListenerAdapter {
         }
         // ここまでreturn
 
-        if (getReadChannels(event).contains(event.getChannel())) {
-            addReaded(event.getGuild().getAudioManager().getSendingHandler(),
+        if (getReadChannels(event).contains(event.getChannel())) {// read
+            AudioSendHandler audioSendHandler = event.getGuild().getAudioManager().getSendingHandler();
+            if (Pattern.matches("[;；].*", event.getMessage().getContentRaw())) {
+                return;
+            }
+            if (Pattern.matches("(?i)http.*", event.getMessage().getContentRaw())) {
+                addReaded(audioSendHandler, event.getMember().getEffectiveName() + " url省略");
+                return;
+            }
+            addReaded(audioSendHandler,
                     event.getMember().getEffectiveName() + " " + event.getMessage().getContentDisplay());
+            return;
         }
     }
 
@@ -78,7 +79,7 @@ public class ChatReader extends ListenerAdapter {
         return readHandler.readChannels;
     }
 
-    public void addReaded(@NonNull AudioSendHandler dst,@NonNull String text) {
+    public void addReaded(@NonNull AudioSendHandler dst, @NonNull String text) {
         if (dst instanceof ReadHandler) {
             ((ReadHandler) dst).queue.add(synthesize(text));
         } else {
