@@ -10,6 +10,7 @@ plugins {
     // Apply the java plugin to add support for Java
     id 'java-platform'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id "io.freefair.lombok" version "5.0.1"
 
     // Apply the application plugin to add support for building an application
     id 'application'
@@ -21,6 +22,7 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenCentral()
 }
 // Merging Service Files
 shadowJar {
@@ -29,8 +31,8 @@ shadowJar {
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     api platform('com.google.cloud:libraries-bom:3.4.0')
-    implementation 'com.google.guava:guava'
     implementation 'com.google.cloud:google-cloud-texttospeech:1.0.2'
+    implementation 'org.slf4j:slf4j-simple:1.7.30'
     // JDA
     implementation  'net.dv8tion:JDA:4.1.1_101'
 }
